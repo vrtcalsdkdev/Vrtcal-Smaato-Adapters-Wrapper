@@ -8,7 +8,10 @@ class VrtcalSmaatoAdaptersWrapper: NSObject, AdapterWrapperProtocol {
     
     var appLogger: Logger
     var sdkEventsLogger: Logger
+    var sdk = SDK.smaato
     var delegate: AdapterWrapperDelegate
+    
+    var smaInterstitial: SMAInterstitial?
     
     required init(
         appLogger: Logger,
@@ -21,12 +24,12 @@ class VrtcalSmaatoAdaptersWrapper: NSObject, AdapterWrapperProtocol {
     }
     
     func initializeSdk() {
-        appLogger.log()
         let config = SMAConfiguration(publisherId: "1100043958")!
         config.httpsOnly = true
-        config.logLevel = .error
+        config.logLevel = .verbose
         config.maxAdContentRating = .undefined
         SmaatoSDK.initSDK(withConfig:config)
+        sdkEventsLogger.log("Smaato does not provide an sdk init callback")
     }
     
     func handle(vrtcalAsSecondaryConfig: VrtcalAsSecondaryConfig) {
@@ -59,7 +62,16 @@ class VrtcalSmaatoAdaptersWrapper: NSObject, AdapterWrapperProtocol {
     }
     
     func showInterstitial() -> Bool {
-        false
+        if let smaInterstitial {
+            smaInterstitial.show(from: delegate.viewController)
+            return true
+        }
+        
+        return false
+    }
+    
+    func destroyInterstitial() {
+        smaInterstitial = nil
     }
 }
 
@@ -85,7 +97,7 @@ extension VrtcalSmaatoAdaptersWrapper: SMABannerViewDelegate {
 extension VrtcalSmaatoAdaptersWrapper: SMAInterstitialDelegate {
     func interstitialDidLoad(_ interstitial: SMAInterstitial) {
         sdkEventsLogger.log("Smaato interstitialDidLoad")
-        interstitial.show(from: delegate.viewController)
+        self.smaInterstitial = interstitial
     }
     
     func interstitial(_ interstitial: SMAInterstitial?, didFailWithError error: Error) {
