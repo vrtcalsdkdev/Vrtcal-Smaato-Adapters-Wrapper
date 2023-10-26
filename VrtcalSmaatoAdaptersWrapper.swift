@@ -32,23 +32,23 @@ class VrtcalSmaatoAdaptersWrapper: NSObject, AdapterWrapperProtocol {
         sdkEventsLogger.log("Smaato does not provide an sdk init callback")
     }
     
-    func handle(vrtcalAsSecondaryConfig: VrtcalAsSecondaryConfig) {
+    func handle(adTechConfig: AdTechConfig) {
         
-        switch vrtcalAsSecondaryConfig.placementType {
+        switch adTechConfig.placementType {
             case .banner:
                 appLogger.log("Smaato Banner")
                 let smaBannerView = SMABannerView()
                 smaBannerView.delegate = self
                 delegate.provide(banner: smaBannerView)
                 smaBannerView.load(
-                    withAdSpaceId: vrtcalAsSecondaryConfig.adUnitId,
+                    withAdSpaceId: adTechConfig.adUnitId,
                     adSize: .xxLarge_320x50
                 )
 
             case .interstitial:
                 appLogger.log("Smaato Interstitial")
                 SmaatoSDK.loadInterstitial(
-                    forAdSpaceId: vrtcalAsSecondaryConfig.adUnitId,
+                    forAdSpaceId: adTechConfig.adUnitId,
                     delegate: self
                 )
                 
