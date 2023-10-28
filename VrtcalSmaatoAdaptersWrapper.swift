@@ -39,7 +39,7 @@ class VrtcalSmaatoAdaptersWrapper: NSObject, AdapterWrapperProtocol {
                 appLogger.log("Smaato Banner")
                 let smaBannerView = SMABannerView()
                 smaBannerView.delegate = self
-                delegate.provide(banner: smaBannerView)
+                delegate.adapterWrapperDidProvide(banner: smaBannerView)
                 smaBannerView.load(
                     withAdSpaceId: adTechConfig.adUnitId,
                     adSize: .xxLarge_320x50
